@@ -2057,3 +2057,7 @@ redirects:
     to: /docs/guides/password-import-inline-hook/-/test-password-import-hook/
   - from: /docs/guides/password-import-hook/-/next-steps/index.html
     to: /docs/guides/password-import-inline-hook/-/test-password-import-hook/
+  -  from: /integrate-with-okta/index.html
+     to: /okta-integration-network/
+  -  from: /integrate-with-okta
+     to: /okta-integration-network/
