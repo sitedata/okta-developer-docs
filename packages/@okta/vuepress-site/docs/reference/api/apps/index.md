@@ -6360,13 +6360,14 @@ Applications that are configured with `BASIC_AUTH`, `BROWSER_PLUGIN`, or `SECURE
 
 Specifies the template used to generate a user's username when the application is assigned via a group or directly to a user
 
-| Property   | Description                             | DataType                         | Nullable | Default           | MinLength | MaxLength  | Validation |
-| ---------- | --------------------------------------- | -------------------------------- | -------- | ----------------- | --------- | ---------- | ---------- |
-| template   | mapping expression for username         | String                           | TRUE     | `${source.login}` |           | 1024       |            |
-| type       | type of mapping expression              | `NONE`,  `BUILT_IN`, or `CUSTOM` | FALSE    | BUILT_IN          |           |            |            |
-| userSuffix | suffix for built-in mapping expressions | String                           | TRUE     | NULL              |           |            |            |
+| Property                                | Description                             | DataType                         | Nullable | Default           | MinLength | MaxLength  | Validation |
+| --------------------------------------- | --------------------------------------- | -------------------------------- | -------- | ----------------- | --------- | ---------- | ---------- |
+| template                                | mapping expression for username         | String                           | TRUE     | `${source.login}` |           | 1024       |            |
+| type                                    | type of mapping expression              | `NONE`,  `BUILT_IN`, or `CUSTOM` | FALSE    | BUILT_IN          |           |            |            |
+| userSuffix                              | suffix for built-in mapping expressions | String                           | TRUE     | NULL              |           |            |            |
+| pushStatus <ApiLifecycle access="ea" /> | push username on update                 | `PUSH`, `DONT_PUSH`              | TRUE     | NULL              |           |            |            |
 
-> **Note:** You must use the `CUSTOM` type when defining your own expression that is not built-in.
+> **Note:** You must use the `CUSTOM` type when defining your own expression that is not built-in. The `pushStatus` <ApiLifecycle access="ea" /> parameter is visible when type is `CUSTOM` and `SUPPORT_PUSH_STATUS_FOR_APPS_API` feature is enabled.
 
 ```json
 {
