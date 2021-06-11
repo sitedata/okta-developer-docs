@@ -13,7 +13,7 @@ This guide will walk you through integrating authentication into a Vue app with 
 - [Install Dependencies](#install-dependencies)
 - [Create a Widget Wrapper](#create-a-widget-wrapper)
 - [Create Routes](#create-routes)
-  - [`/`](#)
+  - [`/`](#index-page)
   - [`/profile`](#profile)
   - [`/login`](#login)
   - [`/login/callback`](#logincallback)
@@ -21,7 +21,6 @@ This guide will walk you through integrating authentication into a Vue app with 
 - [Start your app](#start-your-app)
 - [Conclusion](#conclusion)
 - [Support](#support)
-
 
 > This guide is for `@okta/okta-signin-widget` v5.2.0, `@okta/okta-vue` v3.0.0 and `@okta/okta-auth-js` v4.5.0.
 
@@ -31,15 +30,15 @@ If you do not already have a **Developer Edition Account**, you can create one a
 
 ## Add an OpenID Connect Client in Okta
 
-* Sign in to the Okta Developer Dashboard, and select **Create New App**
-* Choose **Single Page App (SPA)** as the platform, then populate your new OpenID Connect app with values similar to:
+- Sign in to the Okta Developer Dashboard, and select **Create New App**
+- Choose **Single Page App (SPA)** as the platform, then populate your new OpenID Connect app with values similar to:
 
-| Setting              | Value                                               |
-| -------------------  | --------------------------------------------------- |
-| App Name             | OpenId Connect App (must be unique)                 |
-| Login redirect URIs  | `http://localhost:8080/login/callback`              |
-| Logout redirect URIs | `http://localhost:8080`                             |
-| Allowed grant types  | Authorization Code                                  |
+| Setting              | Value                                  |
+| -------------------- | -------------------------------------- |
+| App Name             | OpenId Connect App (must be unique)    |
+| Login redirect URIs  | `http://localhost:8080/login/callback` |
+| Logout redirect URIs | `http://localhost:8080`                |
+| Allowed grant types  | Authorization Code                     |
 
 > **Note:** It is important to choose the appropriate application type for apps which are public clients. Failing to do so may result in Okta API endpoints attempting to verify an app's client secret, which public clients are not designed to have, hence breaking the sign-in or sign-out flow.
 
@@ -88,34 +87,32 @@ Create a `src/components/Login.vue` file:
 </template>
 
 <script>
-import OktaSignIn from '@okta/okta-signin-widget'
-import '@okta/okta-signin-widget/dist/css/okta-sign-in.min.css'
+  import OktaSignIn from "@okta/okta-signin-widget";
+  import "@okta/okta-signin-widget/dist/css/okta-sign-in.min.css";
 
-export default {
-  name: 'Login',
-  mounted: function () {
-    this.$nextTick(function () {
-      this.widget = new OktaSignIn({
-        baseUrl: 'https://{yourOktaDomain}',
-        clientId: '{clientId}',
-        redirectUri: 'http://localhost:8080/login/callback',
-        authParams: {
-          pkce: true,
-          issuer: 'https://{yourOktaDomain}/oauth2/default',
-          display: 'page',
-          scopes: ['openid', 'profile', 'email']
-        }
-      })
-      this.widget.showSignInAndRedirect(
-        { el: '#okta-signin-container' }
-      )
-    })
-  },
-  destroyed () {
-    // Remove the widget from the DOM on path change
-    this.widget.remove()
-  }
-}
+  export default {
+    name: "Login",
+    mounted: function() {
+      this.$nextTick(function() {
+        this.widget = new OktaSignIn({
+          baseUrl: "https://{yourOktaDomain}",
+          clientId: "{clientId}",
+          redirectUri: "http://localhost:8080/login/callback",
+          authParams: {
+            pkce: true,
+            issuer: "https://{yourOktaDomain}/oauth2/default",
+            display: "page",
+            scopes: ["openid", "profile", "email"]
+          }
+        });
+        this.widget.showSignInAndRedirect({ el: "#okta-signin-container" });
+      });
+    },
+    destroyed() {
+      // Remove the widget from the DOM on path change
+      this.widget.remove();
+    }
+  };
 </script>
 ```
 
@@ -123,12 +120,12 @@ export default {
 
 Some routes require authentication in order to render. Defining those routes is easy using Vue Router and `@okta/okta-vue`. Let's take a look at what routes are needed for this example:
 
-* `/`: A default page to handle basic control of the app.
-* `/profile`: A protected route to the current user's profile.
-* `/login`: Show the sign-in page.
-* `/login/callback`: A route to parse tokens after a redirect.
+- `/`: A default page to handle basic control of the app.
+- `/profile`: A protected route to the current user's profile.
+- `/login`: Show the sign-in page.
+- `/login/callback`: A route to parse tokens after a redirect.
 
-### `/`
+### `/ - index page`
 
 First, update `src/App.vue` to provide links to navigate your app:
 
@@ -143,7 +140,7 @@ First, update `src/App.vue` to provide links to navigate your app:
         <router-link to="/login" v-if="!authenticated">
           Login
         </router-link>
-        <router-link to="/profile" v-if="authenticated" >
+        <router-link to="/profile" v-if="authenticated">
           Profile
         </router-link>
         <router-link to="/" v-if="authenticated" v-on:click.native="logout()">
@@ -152,39 +149,41 @@ First, update `src/App.vue` to provide links to navigate your app:
       </div>
     </nav>
     <div id="content">
-      <router-view/>
+      <router-view />
     </div>
   </div>
 </template>
 
 <script>
-export default {
-  name: 'app',
-  data: function () {
-    return { authenticated: false }
-  },
-  created () {
-    this.isAuthenticated()
-    this.$auth.authStateManager.subscribe(this.isAuthenticated)
-  },
-  watch: {
-    // Everytime the route changes, check for auth status
-    '$route': 'isAuthenticated'
-  },
-  methods: {
-    async isAuthenticated () {
-      this.authenticated = await this.$auth.isAuthenticated()
+  export default {
+    name: "app",
+    data: function() {
+      return { authenticated: false };
     },
-    async logout () {
-      await this.$auth.signOut()
-      await this.isAuthenticated()
+    created() {
+      this.isAuthenticated();
+      this.$auth.authStateManager.subscribe(this.isAuthenticated);
+    },
+    watch: {
+      // Everytime the route changes, check for auth status
+      $route: "isAuthenticated"
+    },
+    methods: {
+      async isAuthenticated() {
+        this.authenticated = await this.$auth.isAuthenticated();
+      },
+      async logout() {
+        await this.$auth.signOut();
+        await this.isAuthenticated();
+      }
     }
-  }
-}
+  };
 </script>
 
 <style>
-nav div a { margin-right: 10px }
+  nav div a {
+    margin-right: 10px;
+  }
 </style>
 ```
 
@@ -204,29 +203,32 @@ Next, create `src/components/Home.vue` to welcome the user after they've signed 
     <div v-if="this.$parent.authenticated">
       <p>Welcome back, {{claims.name}}!</p>
       <p>
-        You have successfully authenticated with Okta!
-        Visit the <a href="/profile">My Profile</a> page to take a look inside the ID token.
+        You have successfully authenticated with Okta! Visit the
+        <a href="/profile">My Profile</a> page to take a look inside the ID
+        token.
       </p>
     </div>
   </div>
 </template>
 
 <script>
-export default {
-  name: 'home',
-  data: function () {
-    return {
-      claims: ''
+  export default {
+    name: "home",
+    data: function() {
+      return {
+        claims: ""
+      };
+    },
+    created() {
+      this.setup();
+    },
+    methods: {
+      async setup() {
+        if (this.$parent.authenticated)
+          this.claims = await this.$auth.getUser();
+      }
     }
-  },
-  created () { this.setup() },
-  methods: {
-    async setup () {
-      if (this.$parent.authenticated)
-        this.claims = await this.$auth.getUser()
-    }
-  }
-}
+  };
 </script>
 ```
 
@@ -261,17 +263,19 @@ Create a new `Profile` component at `src/components/Profile.vue`:
 </template>
 
 <script>
-export default {
-  name: 'Profile',
-  data () {
-    return {
-      claims: []
+  export default {
+    name: "Profile",
+    data() {
+      return {
+        claims: []
+      };
+    },
+    async created() {
+      this.claims = await Object.entries(
+        await this.$auth.getUser()
+      ).map(entry => ({ claim: entry[0], value: entry[1] }));
     }
-  },
-  async created () {
-    this.claims = await Object.entries(await this.$auth.getUser()).map(entry => ({ claim: entry[0], value: entry[1] }))
-  }
-}
+  };
 </script>
 ```
 
@@ -290,61 +294,64 @@ The component for this route (LoginCallback) comes with `@okta/okta-vue`. It han
 This example is using Vue Router. Replace the code in `src/router/index.js` with the following:
 
 ```js
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import Auth, { LoginCallback } from '@okta/okta-vue'
-import { OktaAuth } from '@okta/okta-auth-js'
-import HomeComponent from '@/components/Home'
-import LoginComponent from '@/components/Login'
-import ProfileComponent from '@/components/Profile'
+import Vue from "vue";
+import VueRouter from "vue-router";
+import Auth, { LoginCallback } from "@okta/okta-vue";
+import { OktaAuth } from "@okta/okta-auth-js";
+import HomeComponent from "@/components/Home";
+import LoginComponent from "@/components/Login";
+import ProfileComponent from "@/components/Profile";
 
-Vue.use(VueRouter)
+Vue.use(VueRouter);
 
 const oktaAuth = new OktaAuth({
-  issuer: 'https://{yourOktaDomain}/oauth2/default',
-  clientId: '{clientId}',
-  redirectUri: window.location.origin + '/login/callback',
-  scopes: ['openid', 'profile', 'email']
-})
-Vue.use(Auth, { oktaAuth })
+  issuer: "https://{yourOktaDomain}/oauth2/default",
+  clientId: "{clientId}",
+  redirectUri: window.location.origin + "/login/callback",
+  scopes: ["openid", "profile", "email"]
+});
+Vue.use(Auth, { oktaAuth });
 
 const router = new VueRouter({
-  mode: 'history',
+  mode: "history",
   routes: [
     {
-      path: '/',
+      path: "/",
       component: HomeComponent
     },
     {
-      path: '/login',
+      path: "/login",
       component: LoginComponent
     },
     {
-      path: '/login/callback',
+      path: "/login/callback",
       component: LoginCallback
     },
     {
-      path: '/profile',
+      path: "/profile",
       component: ProfileComponent,
       meta: {
         requiresAuth: true
       }
     }
   ]
-})
+});
 
 const onAuthRequired = async (from, to, next) => {
-  if (from.matched.some(record => record.meta.requiresAuth) && !(await Vue.prototype.$auth.isAuthenticated())) {
+  if (
+    from.matched.some(record => record.meta.requiresAuth) &&
+    !(await Vue.prototype.$auth.isAuthenticated())
+  ) {
     // Navigate to custom login page
-    next({ path: '/login' })
+    next({ path: "/login" });
   } else {
-    next()
+    next();
   }
-}
+};
 
-router.beforeEach(onAuthRequired)
+router.beforeEach(onAuthRequired);
 
-export default router
+export default router;
 ```
 
 Make sure to replace the `{...}` placeholders with values from your OIDC app on Okta.
